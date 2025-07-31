@@ -1,35 +1,48 @@
 <?php
 include 'conexion.php';
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-$data = json_decode(file_get_contents("php://input"));
 
-if (
-    isset($data->nombre) && !empty(trim($data->nombre)) &&
-    isset($data->apellido) && !empty(trim($data->apellido)) &&
-    isset($data->materia) && !empty(trim($data->materia))
-) {
-    $nombre = $conn->real_escape_string(trim($data->nombre));
-    $apellido = $conn->real_escape_string(trim($data->apellido));
-    $materia = $conn->real_escape_string(trim($data->materia));
-    $condicion = isset($data->condicion) ? $conn->real_escape_string($data->condicion) : 'sinmarcar';
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 
-    $sql = "INSERT INTO docentes (nombre, apellido, materia, condicion) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $nombre, $apellido, $materia, $condicion);
-
-    if ($stmt->execute()) {
-        echo json_encode(["message" => "Docente guardado con éxito", "id" => $conn->insert_id]);
-    } else {
-        http_response_code(500); // Internal Server Error
-        echo json_encode(["message" => "Error al guardar el docente: " . $stmt->error]);
-    }
-    $stmt->close();
-} else {
-    http_response_code(400); // Bad Request
-    echo json_encode(["message" => "Datos incompletos para guardar el docente."]);
+if (json_last_error() !== JSON_ERROR_NONE) {
+    http_response_code(400);
+    echo json_encode(["error" => "JSON no válido"]);
+    $conn->close();
+    exit;
 }
 
+$nombre = $data['nombre_apellido'] ?? null;
+$curso = $data['curso'] ?? null;
+$materia = $data['materia'] ?? null;
+$condicion = $data['condicion'] ?? 'sinmarcar';
+
+if (!$nombre || !$curso || !$materia) {
+    http_response_code(400);
+    echo json_encode(["error" => "Todos los campos son obligatorios."]);
+    $conn->close();
+    exit;
+}
+
+$aprobado = 0;
+$desaprobado = 0;
+
+if ($condicion === 'aprobado') {
+    $aprobado = 1;
+} elseif ($condicion === 'desaprobado') {
+    $desaprobado = 1;
+}
+
+$sql = "INSERT INTO estudiantes (nombre, curso, materia, aprobado, desaprobado) VALUES (?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sssii", $nombre, $curso, $materia, $aprobado, $desaprobado);
+
+if ($stmt->execute()) {
+    echo json_encode(["mensaje" => "Estudiante guardado con éxito!", "id" => $conn->insert_id]);
+} else {
+    http_response_code(500);
+    echo json_encode(["error" => "Error al guardar el estudiante: " . $stmt->error]);
+}
+
+$stmt->close();
 $conn->close();
 ?>

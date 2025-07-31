@@ -1,0 +1,172 @@
+/* Estilos generales y variables */
+:root {
+  --color-primary: #007bff;
+  --color-success: #28a745;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --color-light: #f8f9fa;
+  --color-dark: #343a40;
+  --color-text: #212529;
+  --border-radius: 5px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  background-color: var(--color-light);
+  color: var(--color-text);
+  padding: 20px;
+  margin: 0;
+}
+
+#app {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 10px;
+  margin-top: 0;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 2rem 0;
+}
+
+/* Estilos del formulario */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.radio-group label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+button[type="submit"] {
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos de los mensajes */
+.mensaje {
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-top: 15px;
+  text-align: center;
+}
+
+.mensaje.exito {
+  background-color: #d4edda;
+  color: var(--color-success);
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: var(--color-danger);
+  border: 1px solid #f5c6cb;
+}
+
+/* Estilos de la tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+thead tr {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-light);
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+td:last-child {
+  text-align: center;
+}
+
+.eliminar {
+  background-color: var(--color-danger);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.eliminar:hover {
+  background-color: #c82333;
+}
+
+/* Estilos para la condición del estudiante */
+td span {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: var(--border-radius);
+}
+
+span.aprobado {
+  color: var(--color-success);
+  background-color: #e2f7e7;
+}
+
+span.desaprobado {
+  color: var(--color-danger);
+  background-color: #fcebeb;
+}

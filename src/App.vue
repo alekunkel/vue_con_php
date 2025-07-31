@@ -1,104 +1,100 @@
-<script setup>
+	<script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-const docente = ref({
-  nombre: '',
-  apellido: '',
+const estudiante = ref({
+  nombre_apellido: '',
+  curso: '',
   materia: '',
-  condicion: 'sinmarcar',
+  condicion: 'sinmarcar', 
 })
 
-const docentes = ref([])
+const estudiantes = ref([])
 
 const mensajeExito = ref(null)
 const mensajeError = ref(null)
 
 const URL_BACKEND = 'http://localhost/formulario/backend'
 
-// Obtener docentes al montar
 onMounted(async () => {
   try {
-    const response = await axios.get(`${URL_BACKEND}/obtener_docentes.php`)
-    docentes.value = response.data
+    const response = await axios.get(`${URL_BACKEND}/obtener_estudiantes.php`) 
+    estudiantes.value = response.data
   } catch (error) {
-    console.error('Error al obtener docentes:', error)
-    mensajeError.value = 'No se pudieron cargar los docentes. Intentá recargar la página.'
+    console.error('Error al obtener estudiantes:', error)
+    mensajeError.value = 'No se pudieron cargar los estudiantes. Intentá recargar la página.'
   }
 })
 
-// Guardar docente
-async function guardarDocente() {
-  if (!docente.value.nombre || !docente.value.apellido || !docente.value.materia) {
+async function guardarEstudiante() {
+  if (!estudiante.value.nombre_apellido || !estudiante.value.curso || !estudiante.value.materia) {
     mensajeError.value = 'Por favor, completá todos los campos requeridos.'
     return
   }
 
   try {
-    const response = await axios.post(`${URL_BACKEND}/envio_de_datos.php`, docente.value)
+    const response = await axios.post(`${URL_BACKEND}/envio_de_datos.php`, estudiante.value)
 
-    const nuevoDocente = {
-      ...docente.value,
+    const nuevoEstudiante = {
+      ...estudiante.value,
       id: response.data.id ?? Date.now()
     }
 
-    docentes.value.push(nuevoDocente)
+    estudiantes.value.push(nuevoEstudiante) 
 
-    mensajeExito.value = 'Docente guardado con éxito!'
+    mensajeExito.value = 'Estudiante guardado con éxito!'
     mensajeError.value = null
 
-    // Resetear formulario
-    docente.value = {
-      nombre: '',
-      apellido: '',
+    estudiante.value = {
+      nombre_apellido: '',
+      curso: '',
       materia: '',
       condicion: 'sinmarcar',
     }
   } catch (error) {
-    console.error('Error al guardar docente:', error)
-    mensajeError.value = 'Error al guardar el docente. Verificá la conexión y los datos.'
+    console.error('Error al guardar estudiante:', error)
+    mensajeError.value = 'Error al guardar el estudiante. Verificá la conexión y los datos.'
   }
 }
 
-// Eliminar docente
-function eliminarDocente(id) {
-  if (!confirm('¿Estás seguro de que querés eliminar este docente?')) return
+function eliminarEstudiante(id) {
+  if (!confirm('¿Estás seguro de que querés eliminar este estudiante?')) return
 
   mensajeExito.value = null
   mensajeError.value = null
 
-  axios.post(`${URL_BACKEND}/eliminar_docente.php`, { id })
+  axios.post(`${URL_BACKEND}/eliminar_estudiante.php`, { id })
     .then(() => {
-      docentes.value = docentes.value.filter(doc => doc.id !== id)
-      mensajeExito.value = 'Docente eliminado correctamente.'
+      estudiantes.value = estudiantes.value.filter(est => est.id !== id)
+      mensajeExito.value = 'Estudiante eliminado correctamente.'
     })
     .catch(error => {
-      console.error('Error al eliminar docente:', error)
-      mensajeError.value = 'Error al eliminar el docente. Intentá de nuevo.'
+      console.error('Error al eliminar estudiante:', error)
+      mensajeError.value = 'Error al eliminar el estudiante. Intentá de nuevo.'
     })
 }
 </script>
 
 <template>
-  <h1>Formulario</h1>
-  <form @submit.prevent="guardarDocente">
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" v-model="docente.nombre" required />
+  <h1>Formulario de Estudiantes</h1>
+  <form @submit.prevent="guardarEstudiante">
+    <label for="nombre_apellido">Nombre y Apellido:</label>
+    <input type="text" id="nombre_apellido" v-model="estudiante.nombre_apellido" required />
 <br>
-    <label for="apellido">Apellido:</label>
-    <input type="text" id="apellido" v-model="docente.apellido" required />
+    <label for="curso">Curso:</label>
+    <input type="text" id="curso" v-model="estudiante.curso" required />
 <br>
     <label for="materia">Materia:</label>
-    <input type="text" id="materia" v-model="docente.materia" required />
+    <input type="text" id="materia" v-model="estudiante.materia" required />
 
     <div class="radio-group">
       <label>
-        <input type="radio" value="entregada" v-model="docente.condicion" />
-        Entregada
+        <input type="radio" value="aprobado" v-model="estudiante.condicion" />
+        Aprobado
       </label>
       <label>
-        <input type="radio" value="noentregada" v-model="docente.condicion" />
-        No entregada
+        <input type="radio" value="desaprobado" v-model="estudiante.condicion" />
+        Desaprobado
       </label>
     </div>
 
@@ -110,33 +106,33 @@ function eliminarDocente(id) {
 
   <hr />
 
-  <h2>Lista de Docentes</h2>
+  <h2>Lista de Estudiantes</h2>
   <table>
     <thead>
       <tr>
-        <th>Nombre</th>
-        <th>Apellido</th>
+        <th>Nombre y Apellido</th>
+        <th>Curso</th>
         <th>Materia</th>
         <th>Condición</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="docente in docentes" :key="docente.id">
-        <td>{{ docente.nombre }}</td>
-        <td>{{ docente.apellido }}</td>
-        <td>{{ docente.materia }}</td>
+      <tr v-for="estudiante in estudiantes" :key="estudiante.id">
+        <td>{{ estudiante.nombre_apellido }}</td>
+        <td>{{ estudiante.curso }}</td>
+        <td>{{ estudiante.materia }}</td>
         <td>
-          <span v-if="docente.condicion === 'entregada'">Entregado</span>
-          <span v-else-if="docente.condicion === 'noentregada'">No entregado</span>
+          <span v-if="estudiante.condicion === 'aprobado'">Aprobado</span>
+          <span v-else-if="estudiante.condicion === 'desaprobado'">Desaprobado</span>
           <span v-else>Sin marcar</span>
         </td>
         <td>
-          <button class="eliminar" @click="eliminarDocente(docente.id)">Eliminar</button>
+          <button class="eliminar" @click="eliminarEstudiante(estudiante.id)">Eliminar</button>
         </td>
       </tr>
-      <tr v-if="docentes.length === 0">
-        <td colspan="5" style="text-align: center;">No hay docentes registrados.</td>
+      <tr v-if="estudiantes.length === 0">
+        <td colspan="5" style="text-align: center;">No hay estudiantes registrados.</td>
       </tr>
     </tbody>
   </table>
