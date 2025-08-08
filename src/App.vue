@@ -1,4 +1,4 @@
-	<script setup>
+<script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
@@ -13,12 +13,13 @@ const estudiantes = ref([])
 
 const mensajeExito = ref(null)
 const mensajeError = ref(null)
-
-const URL_BACKEND = 'http://localhost/formulario/backend'
+// La URL apunta a la base de tu API, incluyendo el prefijo '/api'
+const API_URL = 'http://localhost:3000/api'
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`${URL_BACKEND}/obtener_estudiantes.php`) 
+    // La petición va al endpoint 'obtener-estudiantes'
+    const response = await axios.get(`${API_URL}/obtener-estudiantes`) 
     estudiantes.value = response.data
   } catch (error) {
     console.error('Error al obtener estudiantes:', error)
@@ -33,7 +34,8 @@ async function guardarEstudiante() {
   }
 
   try {
-    const response = await axios.post(`${URL_BACKEND}/envio_de_datos.php`, estudiante.value)
+    // La petición POST va al endpoint 'guardar-estudiante'
+    const response = await axios.post(`${API_URL}/guardar-estudiante`, estudiante.value)
 
     const nuevoEstudiante = {
       ...estudiante.value,
@@ -63,7 +65,8 @@ function eliminarEstudiante(id) {
   mensajeExito.value = null
   mensajeError.value = null
 
-  axios.post(`${URL_BACKEND}/eliminar_estudiante.php`, { id })
+  // La petición POST va al endpoint 'eliminar-estudiante'
+  axios.post(`${API_URL}/eliminar-estudiante`, { id })
     .then(() => {
       estudiantes.value = estudiantes.value.filter(est => est.id !== id)
       mensajeExito.value = 'Estudiante eliminado correctamente.'
